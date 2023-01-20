@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductsModule } from './products/products.module';
 
 // en prod por lo general no se va querer poner el synchronize en true, porque lo q hace es si hay algun cambio en las entidades automaticamente los sincroniza
 // en prod por lo general se usa migraciones
@@ -18,6 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    ProductsModule,
   ],
 })
 export class AppModule {}
