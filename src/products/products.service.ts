@@ -100,11 +100,32 @@ export class ProductsService {
     // Create query runner
     // el datasource conoce la cadena de conexion
     const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      await this.productRepository.save(product);
-      return product;
+      // si hay valores en la prop de imagenes que se envie en el dto, se borran
+      if (images) {
+        // el id es el del producto
+        // se borra todas las imagenes cuyo productId sea el del id
+        await queryRunner.manager.delete(ProductImage, { product: { id } });
+        // crea nuevas imagenes, pero sin impactar la bd
+        product.images = images.map(image => this.productImageRepository.create({ url: image }));
+      }
+      // else {
+      //   product.images = await this.productImageRepository.findBy({ product: { id }});
+        // faltaria mapear para q solo sea un array de cadena
+      // }
+      await queryRunner.manager.save(product);
+      // await this.productRepository.save(product);
+      // hace el commit, impactando la bd
+      await queryRunner.commitTransaction();
+      // libera el queryRunner
+      await queryRunner.release();
+      return this.findOnePlain(id);
     } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
       this.handleDBExceptions(error);
     }
   }
