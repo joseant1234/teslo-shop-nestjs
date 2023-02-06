@@ -7,6 +7,7 @@ import { ProductsModule } from './products/products.module';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { FilesModule } from './files/files.module';
+import { AuthModule } from './auth/auth.module';
 
 
 // en prod por lo general no se va querer poner el synchronize en true, porque lo q hace es si hay algun cambio en las entidades automaticamente los sincroniza
@@ -32,6 +33,7 @@ import { FilesModule } from './files/files.module';
     CommonModule,
     SeedModule,
     FilesModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
