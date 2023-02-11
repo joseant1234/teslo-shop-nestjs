@@ -1,7 +1,10 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Headers } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { IncomingHttpHeaders } from 'http';
 import { AuthService } from './auth.service';
+import { GetUser, RawHeaders } from './decorators';
 import { CreateUserDto, LoginUserDto } from './dto';
+import { User } from './entities/user.entity';
 
 
 
@@ -19,12 +22,22 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+  // si puede usar un pipe parse... GetUser('isActive', ParseBoolean)
   @Get('private')
   @UseGuards(AuthGuard())
-  testingPrivateRoute() {
+  testingPrivateRoute(
+    @GetUser() user: User,
+    @GetUser('email') userEmail: string,
+    @RawHeaders() rawHeaders: string[],
+    @Headers() headers: IncomingHttpHeaders,
+  ) {
     return {
       ok: true,
-      message: 'Private'
+      message: 'Private',
+      user,
+      userEmail,
+      rawHeaders,
+      headers,
     }
   }
 
