@@ -6,6 +6,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { validate as isUUID } from 'uuid';
 import { Product, ProductImage } from './entities';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -21,7 +22,7 @@ export class ProductsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       const { images = [], ...productDetails } = createProductDto;
       // solo crea la instancia del producto, aun no lo graba en la bd
@@ -30,6 +31,7 @@ export class ProductsService {
       const product = this.productRepository.create({
         ...productDetails,
         images: images.map(image => this.productImageRepository.create({ url: image })),
+        user,
       });
       // con el save se graba en bd
       await this.productRepository.save(product)
@@ -87,7 +89,7 @@ export class ProductsService {
     };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
 
     const { images, ...toUpdate } = updateProductDto;
     // busca un producto por el id, y le coloca las propiedades definidas en el dto, eso no actualiza
@@ -116,6 +118,7 @@ export class ProductsService {
       //   product.images = await this.productImageRepository.findBy({ product: { id }});
         // faltaria mapear para q solo sea un array de cadena
       // }
+      product.user = user;
       await queryRunner.manager.save(product);
       // await this.productRepository.save(product);
       // hace el commit, impactando la bd
