@@ -24,6 +24,14 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+  @Get('check-status')
+  @Auth()
+  checkAuthStatus(
+    @GetUser() user: User,
+  ) {
+    return this.authService.checkAuthStatus(user);
+  }
+
   // si puede usar un pipe parse... GetUser('isActive', ParseBoolean)
   @Get('private')
   @UseGuards(AuthGuard())
