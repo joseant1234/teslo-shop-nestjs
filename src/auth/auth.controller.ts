@@ -54,6 +54,7 @@ export class AuthController {
 
   // set metadata adiciona informacion extra al metodo, controlador a ejecutar
   // AuthGuard internamente crea una instancia q la retorna es por eso q no se usa new AuthGuard
+  // SetMetadata('roles', ['admin', 'super-user']) no evalua los roles, para eso esta el UserRoleGuard
   // no se usa new UserRoleGuard() porque eso haría q cada vez q entre una nueva solicitud crea una nueva instancia
   @Get('private2')
   @SetMetadata('roles', ['admin', 'super-user'])
